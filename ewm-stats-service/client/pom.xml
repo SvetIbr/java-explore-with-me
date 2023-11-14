@@ -5,13 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>ru.practicum</groupId>
-        <artifactId>explore-with-me</artifactId>
+        <artifactId>ewm-stats-service</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>stats</artifactId>
+    <artifactId>client</artifactId>
+    <packaging>jar</packaging>
 
-    <name>Stats Service</name>
+    <name>ewm-stats-client</name>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -27,17 +28,12 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
         <dependency>
@@ -46,28 +42,11 @@
         </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
+            <groupId>ru.practicum</groupId>
+            <artifactId>dto</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <executable>true</executable>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
