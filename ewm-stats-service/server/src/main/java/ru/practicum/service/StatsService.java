@@ -1,12 +1,13 @@
 package ru.practicum.service;
 
-import ru.practicum.EndpointHit;
+import ru.practicum.HitDto;
 import ru.practicum.ViewStats;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatsService {
-    void add(EndpointHit endpointHit);
+    void add(HitDto hitDto);
 
-    List<ViewStats> get(String start, String end, String[] uris, Boolean unique);
+    List<ViewStats> get(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique);
 }

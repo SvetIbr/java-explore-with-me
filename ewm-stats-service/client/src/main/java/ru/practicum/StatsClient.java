@@ -27,8 +27,8 @@ public class StatsClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> post(EndpointHit endpointHit) {
-        return post(PREFIX_HIT, endpointHit);
+    public ResponseEntity<Object> post(HitDto hitDto) {
+        return post(PREFIX_HIT, hitDto);
     }
 
     public ResponseEntity<Object> get(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
