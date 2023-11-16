@@ -24,7 +24,7 @@ public class StatsClient extends BaseClient {
     private static final String PREFIX_HIT = "/hit";
 
     @Value("${format.pattern.datetime}")
-    public String DateTimeFormat;
+    public String dateTimeFormat;
 
     public StatsClient(@Value("${stats.server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
@@ -41,9 +41,9 @@ public class StatsClient extends BaseClient {
 
     public ResponseEntity<Object> get(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
         Map<String, Object> parameters = Map.of(
-                "start", URLEncoder.encode(start.format(DateTimeFormatter.ofPattern(DateTimeFormat)),
+                "start", URLEncoder.encode(start.format(DateTimeFormatter.ofPattern(dateTimeFormat)),
                         StandardCharsets.UTF_8),
-                "end", URLEncoder.encode(end.format(DateTimeFormatter.ofPattern(DateTimeFormat)),
+                "end", URLEncoder.encode(end.format(DateTimeFormatter.ofPattern(dateTimeFormat)),
                         StandardCharsets.UTF_8),
                 "uris", uris,
                 "unique", unique);
