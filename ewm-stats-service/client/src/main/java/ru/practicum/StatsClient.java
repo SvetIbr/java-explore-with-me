@@ -12,11 +12,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+/**
+ * Класс  реализации основных REST-методов с использованием RestTemplate
+ * для взаимодействия с основным сервисом приложения
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
 public class StatsClient extends BaseClient {
-
     private static final String PREFIX_STATS = "/stats";
     private static final String PREFIX_HIT = "/hit";
-    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    @Value("${format.pattern.datetime}")
+    public String DateTimeFormat;
 
     public StatsClient(@Value("${stats.server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
@@ -33,14 +41,12 @@ public class StatsClient extends BaseClient {
 
     public ResponseEntity<Object> get(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
         Map<String, Object> parameters = Map.of(
-                "start", encode(start.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))),
-                "end", encode(end.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))),
+                "start", URLEncoder.encode(start.format(DateTimeFormatter.ofPattern(DateTimeFormat)),
+                        StandardCharsets.UTF_8),
+                "end", URLEncoder.encode(end.format(DateTimeFormatter.ofPattern(DateTimeFormat)),
+                        StandardCharsets.UTF_8),
                 "uris", uris,
                 "unique", unique);
         return get(PREFIX_STATS + "?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
-    }
-
-    private String encode(String text)  {
-        return URLEncoder.encode(text, StandardCharsets.UTF_8);
     }
 }

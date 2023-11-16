@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Класс запроса к основному сервису со свойствами <b>id</b>, <b>uri</b>, <b>app</b>,
+ * Класс запроса по эндпоинту со свойствами <b>id</b>, <b>uri</b>, <b>app</b>,
  * <b>ip</b> и <b>timestamp</b> для работы с хранилищем
  *
  * @author Светлана Ибраева
@@ -20,13 +20,31 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 public class Hit {
+    /**
+     * Поле идентификатор записи
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /**
+     * Поле название сервиса
+     */
     private String app;
+
+    /**
+     * Поле URI
+     */
     private String uri;
+
+    /**
+     * Поле IP-адрес пользователя, осуществившего запрос
+     */
     private String ip;
-    @Column(name = "timestamp")
+
+    /**
+     * Поле дата и время, когда был совершен запрос к эндпоинту
+     */
     private LocalDateTime timestamp;
 
     @Override

@@ -8,7 +8,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Класс просмотра статистики со свойствами <b>app</b>, <b>uri</b>, <b>views</b>
+ * Класс просмотра статистики запросов к эндпоинтам со свойствами <b>app</b>, <b>uri</b>, <b>views</b>
  * для работы через REST-интерфейс
  *
  * @author Светлана Ибраева
@@ -18,7 +18,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @Builder
 public class ViewStats {
-
     /**
      * Поле название сервиса
      */
