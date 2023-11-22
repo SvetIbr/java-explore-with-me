@@ -18,7 +18,7 @@ public class AdminCompilationsController {
     @PostMapping
     public CompilationDto createComp(@Valid @RequestBody NewCompilationDto newCompilationDto) {
         log.info("POST: создание подборки с параметрами: {}", newCompilationDto);
-        return compilationService.createCompilation(newCompilationDto);
+        return compilationService.createComp(newCompilationDto);
     }
 
     @PatchMapping("/{compId}")
@@ -26,12 +26,12 @@ public class AdminCompilationsController {
                                     @Valid @RequestBody NewCompilationDto newCompilationDto) {
         log.info("PATCH: обновление подборки " +
                 "по идентификатору {} с новыми данными: {}", compId, newCompilationDto);
-        return compilationService.updateCompilation(newCompilationDto, compId);
+        return compilationService.updateComp(newCompilationDto, compId);
     }
 
     @DeleteMapping("/{compId}")
     public void deleteCompById(@PathVariable Long compId) {
         log.info("DELETE: удаление подборки по идентификатору {}", compId);
-        compilationService.deleteCompilationById(compId);
+        compilationService.deleteCompById(compId);
     }
 }

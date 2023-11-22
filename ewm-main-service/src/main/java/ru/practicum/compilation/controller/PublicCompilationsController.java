@@ -27,9 +27,9 @@ public class PublicCompilationsController {
     }
 
     @GetMapping("/{compId}")
-    public CompilationDto getCompById(@PathVariable Long compId) {
+    public CompilationDto getCompilationById(@PathVariable Long compId) {
         log.info("GET: Запрос за получение подборки " +
                 "событий по идентификатору: {}", compId);
-        return compilationService.getCompilationById(compId);
+        return compilationService.getCompById(compId);
     }
 }

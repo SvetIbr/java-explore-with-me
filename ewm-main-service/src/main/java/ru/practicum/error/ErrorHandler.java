@@ -1,11 +1,13 @@
 package ru.practicum.error;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.error.exception.BadRequestException;
+import ru.practicum.error.exception.CategoryNotFoundException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -23,4 +25,16 @@ public class ErrorHandler {
                 "status", e.getStatus())),
                 HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Object> handleCategoryNotFoundException(final CategoryNotFoundException e) {
+        return new ResponseEntity<>((Map.of(
+                "error", e.getMessage(),
+                "reason", e.getReason(),
+                "timestamp", e.getTimeStamp().format(FORMAT),
+                "status", e.getStatus())),
+                HttpStatus.BAD_REQUEST);
+    }
+
 }

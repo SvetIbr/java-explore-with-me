@@ -1,31 +1,37 @@
 package ru.practicum.compilation.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
+import ru.practicum.compilation.mapper.CompilationMapper;
+import ru.practicum.compilation.repository.CompilationRepository;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CompilationServiceImp implements CompilationService {
+    private final CompilationRepository compilationRepository;
+    private final CompilationMapper compilationMapper;
     public List<CompilationDto> getCompilations(Boolean pinned, PageRequest of) {
 
     }
 
-    public CompilationDto getCompilationById(Long compId) {
+    public CompilationDto getCompById(Long compId) {
 
     }
 
-    public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
+    public CompilationDto createComp(NewCompilationDto newCompilationDto) {
 
     }
 
-    public void deleteCompilationById(Long compId){
+    public void deleteCompById(Long compId){
 
     }
 
-    public CompilationDto updateCompilation(NewCompilationDto newCompilationDto, Long compId){
+    public CompilationDto updateComp(NewCompilationDto newCompilationDto, Long compId){
 
     }
 
