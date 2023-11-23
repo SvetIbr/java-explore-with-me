@@ -32,10 +32,7 @@ import ru.practicum.user.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +49,6 @@ public class EventServiceImpl implements EventService {
     public static final Integer HOURS_BEFORE_EVENT = 2;
     public static final Integer HOUR_BEFORE_EVENT = 1;
     public static final String URI = "/events/";
-    public static final String APPLICATION_NAME = "ewm-main-service";
 
 
     public List<EventFullDto> getEventsByParametersForAdmin(List<Long> users,
@@ -61,6 +57,7 @@ public class EventServiceImpl implements EventService {
                                                             String rangeStart,
                                                             String rangeEnd,
                                                             PageRequest of) {
+        return null;
 
     }
 
@@ -90,15 +87,20 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new UserNotFoundException(String
                         .format("User with id=%d was not found", userId),
                         "The required object was not found."));
+        if (!categoryRepository.existsById(newEventDto.getCategory())) {
+            throw new CategoryNotFoundException((String
+                    .format("Category with id=%d was not found", newEventDto.getCategory())),
+                    "The required object was not found.");
+        }
+        Event event = eventMapper.toEvent(newEventDto, );
+        event.setInitiator(initiator);
+        event.setCreatedOn(LocalDateTime.now());
+        return eventRepository.save(event);
 
-        Category category = categoryRepository.findById(newEventDto.getCategory())
-                .orElseThrow(() -> new CategoryNotFoundException((String
-                        .format("Category with id=%d was not found", newEventDto.getCategory())),
-                        "The required object was not found."));
+
 
         Location location = locationRepository.save(locationMapper.toLocation(newEventDto.getLocation()));
 
-        Event event = eventMapper.toEvent(newEventDto, category, initiator, location);
 
         if (event.getEventDate().minusHours(HOURS_BEFORE_EVENT).isBefore(event.getCreatedOn())) {
             throw new ConflictException("Incorrect time input",
@@ -115,12 +117,30 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toEventFullDto(event, 0);
     }
 
-    public List<EventShortDto> getEventsByUser(Long userId, PageRequest of) {
+    public List<EventShortDto> getEventsByUser(Long userId, PageRequest pageRequest) {
+        List<Event> events = eventRepository.findAllByInitiatorId(userId, pageRequest);
+        Map<Long, Integer> views = getStats(events);
 
+        return EventMapper.toShortDtos(events, views);
     }
 
     public EventFullDto getEventByIdForInitiator(Long userId, Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException(String
+                                .format("Event with id=%d was not found", eventId),
+                        "The required object was not found."));
+        int views = 0;
 
+        String[] uris = {URI + eventId};
+
+        ResponseEntity<Object> response = statsClient.get(event.getPublishedOn(),
+                LocalDateTime.now(), uris, false);
+        ArrayList<LinkedHashMap<String, Integer>> stats = (ArrayList<LinkedHashMap<String, Integer>>)response
+                .getBody();
+        if (stats != null) {
+            views = stats.get(0).get("hits");
+        }
+        return eventMapper.toEventFullDto(event, views);
     }
 
     @Transactional
@@ -178,13 +198,14 @@ public class EventServiceImpl implements EventService {
 
     public List<RequestDto> getRequestsByEvent(Long userId, Long eventId) {
 
+        return null;
     }
 
     @Transactional
     public RequestsResultStatusDto updateStatusEventRequests(Long eventId,
                                                              Long userId,
                                                              RequestStatusUpdateDto requestStatusUpdateDto) {
-
+        return null;
     }
 
     public List<EventShortDto> getEventsByParametersForUsers(String text,
@@ -197,9 +218,10 @@ public class EventServiceImpl implements EventService {
                                                              PageRequest of,
                                                              HttpServletRequest request) {
 
+        return null;
     }
 
     public EventFullDto getEventById(Long id, HttpServletRequest request) {
-
+        return eventRepository.findById(id);
     }
 }

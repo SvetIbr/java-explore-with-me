@@ -17,25 +17,25 @@ public class EventShortDto {
     private Long id;
 
     @NotNull
-    protected String annotation;
+    private String annotation;
 
     @NotNull
-    protected CategoryDto category;
+    private CategoryDto category;
 
-    protected Integer confirmedRequests;
+    private Integer confirmedRequests;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    protected String eventDate;
+    private String eventDate;
 
     @NotNull
-    protected UserShortDto initiator;
+    private UserShortDto initiator;
 
     @NotNull
-    protected Boolean paid;
+    private Boolean paid;
 
     @NotNull
-    protected String title;
+    private String title;
 
-    protected Integer views;
+    private Integer views;
 }

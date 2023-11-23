@@ -48,12 +48,6 @@ public class EventMapper {
                 .build();
     }
 
-    public Event toEvent(UpdateEventDto updateEventDto, Event event) {
-        return Event.builder()
-                .id(event.getId())
-                .
-    }
-
     public EventFullDto toEventFullDto(Event event, Integer views) {
         return EventFullDto.builder()
                 .id(event.getId())
