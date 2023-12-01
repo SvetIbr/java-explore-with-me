@@ -50,12 +50,4 @@ public class StatsClient extends BaseClient {
 
         return get(PREFIX_STATS + "?start={start}&end={end}" + url + "&unique={unique}", params);
     }
-//        Map<String, Object> parameters = Map.of(
-//                "start", URLEncoder.encode(start.format(DateTimeFormatter.ofPattern(dateTimeFormat)), StandardCharsets.UTF_8),
-//                "end", URLEncoder.encode(end.format(DateTimeFormatter.ofPattern(dateTimeFormat)), StandardCharsets.UTF_8),
-//                "uris", uris,
-//                "unique", unique);
-//
-//        return get(PREFIX_STATS + "?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
-
 }
