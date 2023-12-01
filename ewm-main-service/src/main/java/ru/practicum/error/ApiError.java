@@ -6,6 +6,8 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
+
 /**
  * Класс сведения об ошибке
  *
@@ -33,7 +35,7 @@ public class ApiError {
     /**
      * Поле дата и время, когда произошла ошибка
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime timestamp;
 }
 

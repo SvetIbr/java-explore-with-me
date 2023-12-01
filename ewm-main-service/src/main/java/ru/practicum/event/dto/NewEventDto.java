@@ -9,6 +9,8 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
+
 /**
  * Класс события для добавления в хранилище со свойствами <b>title</b>, <b>annotation</b>,
  * <b>category</b>, <b>paid</b>, <b>eventDate</b>, <b>description</b>,
@@ -48,7 +50,7 @@ public class NewEventDto {
      * Поле дата и время на которые намечено событие
      */
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     @Future
     private LocalDateTime eventDate;
 

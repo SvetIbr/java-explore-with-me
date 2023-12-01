@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
+
 /**
  * Класс заявки на участие в событии со свойствами <b>id</b>, <b>event</b>, <b>created</b>,
  * <b>requester</b>, <b>status</b> для работы через REST-интерфейс
@@ -32,7 +34,7 @@ public class RequestDto {
     /**
      * Поле дата и время создания заявки
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime created;
 
     /**

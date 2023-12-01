@@ -8,16 +8,26 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import ru.practicum.HitDto;
 import ru.practicum.StatsClient;
 import ru.practicum.ViewStats;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.practicum.constants.Constants.APP_CODE;
+import static ru.practicum.constants.Constants.URI;
+
+/**
+ * Класс статистики просмотров событий
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -25,17 +35,21 @@ public class EventStatService {
     private final StatsClient statsClient;
     private final ObjectMapper objectMapper;
     private final Gson gson;
-    public static final String URI = "/events/";
-    public static final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateTimeFormat);
 
+    /**
+     * Метод получения просмотров событий из списка идентификаторов
+     *
+     * @param events - список id событий, чьи просмотры запрашиваются
+     * @return карту просмотров каждого события (ключ - идентификатор события,
+     * значение - количество просмотров)
+     */
     public Map<Long, Long> getEventsViews(List<Long> events) {
         List<ViewStats> stats;
-        Map<Long, Long> eventsViews = new HashMap<>();
+        Map<Long, Long> views = new HashMap<>();
         List<String> uris = new ArrayList<>();
 
         if (events == null || events.isEmpty()) {
-            return eventsViews;
+            return views;
         }
         for (Long id : events) {
             uris.add(URI + id);
@@ -53,15 +67,37 @@ public class EventStatService {
                 throw new RuntimeException("Ошибка при загрузке данных из сервиса статистики");
             }
             for (Long event : events) {
-                eventsViews.put(event, 0L);
+                views.put(event, 0L);
             }
             if (!stats.isEmpty()) {
                 for (ViewStats stat : stats) {
-                    eventsViews.put(Long.parseLong(stat.getUri().split("/", 0)[2]),
+                    views.put(Long.parseLong(stat.getUri().split("/", 0)[2]),
                             stat.getViews());
                 }
             }
         }
-        return eventsViews;
+        return views;
+    }
+
+
+    /**
+     * Метод сохранения данных запроса в хранилище статистики просмотров
+     */
+    public void sendHit(HttpServletRequest request) {
+        statsClient.post(createHitDto(request));
+    }
+
+    /**
+     * Метод получения нового объекта HitDto из данных запроса
+     *
+     * @return HitDto {@link HitDto}
+     */
+    private HitDto createHitDto(HttpServletRequest request) {
+        return HitDto.builder()
+                .app(APP_CODE)
+                .uri(request.getRequestURI())
+                .ip(request.getRemoteAddr())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 }

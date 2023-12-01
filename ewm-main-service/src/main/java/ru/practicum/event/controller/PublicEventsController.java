@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
+
 /**
  * Класс публичного (доступна без регистрации любому пользователю сети) контроллера
  * для работы с сервисом событий
@@ -51,10 +53,10 @@ public class PublicEventsController {
                                                      @RequestParam(required = false) List<Long> categories,
                                                      @RequestParam(required = false) Boolean paid,
                                                      @RequestParam(required = false)
-                                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                     @DateTimeFormat(pattern = DATE_TIME_FORMAT)
                                                      LocalDateTime rangeStart,
                                                      @RequestParam(required = false)
-                                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                     @DateTimeFormat(pattern = DATE_TIME_FORMAT)
                                                      LocalDateTime rangeEnd,
                                                      @RequestParam(required = false,
                                                              defaultValue = "false") Boolean onlyAvailable,

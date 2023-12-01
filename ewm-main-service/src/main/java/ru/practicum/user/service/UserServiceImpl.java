@@ -15,6 +15,9 @@ import ru.practicum.user.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.constants.Constants.USER_NOT_FOUND_MSG;
+import static ru.practicum.constants.Constants.USER_NOT_UNIQUE_NAME_MSG;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -27,15 +30,14 @@ public class UserServiceImpl implements UserService {
         try {
             userToSave = userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("User name and/or email already exists.");
+            throw new ConflictException(USER_NOT_UNIQUE_NAME_MSG);
         }
         return userMapper.toUserDto(userToSave);
     }
 
     public void deleteUserById(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(String
-                    .format("User with id=%d was not found", userId));
+            throw new NotFoundException(String.format(USER_NOT_FOUND_MSG, userId));
         }
         userRepository.deleteById(userId);
     }

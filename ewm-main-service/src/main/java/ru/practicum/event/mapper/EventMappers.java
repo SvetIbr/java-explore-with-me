@@ -14,6 +14,8 @@ import ru.practicum.event.model.Event;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.mapper.UserMapper;
 
+import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
+
 /**
  * Mapper-класс для преобразования объектов сервиса событий
  *
@@ -53,7 +55,7 @@ public interface EventMappers {
     @Mapping(target = "lat", source = "location.lat")
     @Mapping(target = "state", constant = "PENDING")
     @Mapping(target = "confirmedRequests", constant = "0")
-    @Mapping(source = "eventDate", target = "eventDate", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(source = "eventDate", target = "eventDate", dateFormat = DATE_TIME_FORMAT)
     Event toEvent(NewEventDto newEventDto);
 
     /**
@@ -63,6 +65,6 @@ public interface EventMappers {
      * @param event          {@link Event}
      * @return {@link Event}
      */
-    @Mapping(source = "eventDate", target = "eventDate", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Mapping(source = "eventDate", target = "eventDate", dateFormat = DATE_TIME_FORMAT)
     Event updateEvent(UpdateEventDto updateEventDto, @MappingTarget Event event);
 }

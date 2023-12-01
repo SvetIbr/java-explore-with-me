@@ -8,9 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.practicum.StatsClient;
 
-import java.time.format.DateTimeFormatter;
-
 import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
+import static ru.practicum.constants.Constants.FORMATTER;
 
 @Configuration
 public class Config {
@@ -27,7 +26,7 @@ public class Config {
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         return builder -> {
             builder.simpleDateFormat(DATE_TIME_FORMAT);
-            builder.serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)));
+            builder.serializers(new LocalDateTimeSerializer(FORMATTER));
         };
     }
 }

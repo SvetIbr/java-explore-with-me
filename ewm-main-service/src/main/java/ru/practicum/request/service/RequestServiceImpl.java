@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.constants.Constants.*;
+
 @Service
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
@@ -69,7 +71,7 @@ public class RequestServiceImpl implements RequestService {
         checkUserInStorage(userId);
 
         Request request = requestRepository.findByIdAndRequesterId(requestId, userId).orElseThrow(
-                () -> new NotFoundException(String.format("Request with id=%d was not found", requestId)));
+                () -> new NotFoundException(String.format(REQUEST_NOT_FOUND_MSG, requestId)));
 
         if (request.getStatus().equals(RequestStatus.CONFIRMED)) {
             Event event = request.getEvent();
@@ -78,29 +80,29 @@ public class RequestServiceImpl implements RequestService {
         }
 
         request.setStatus(RequestStatus.CANCELED);
+
         return requestMapper.toRequestDto(requestRepository.save(request));
     }
 
     public RequestsResultStatusDto updateRequestsStatusByEvent(RequestStatusUpdateDto
-                                                                       requestStatusUpdateDto, Event event) {
+                                                                       requestStatusUpdateDto,
+                                                               Event event) {
 
         List<Request> requests = requestRepository
                 .findAllByIdInAndEventId(requestStatusUpdateDto.getRequestIds(), event.getId());
 
         if (requests.size() != requestStatusUpdateDto.getRequestIds().size()) {
-            throw new NotFoundException("Incorrect request id(s) received in the request body.");
+            throw new NotFoundException(INCORRECT_SIZE_IDS_MSG);
         }
 
         for (Request request : requests) {
             if (!request.getStatus().equals(RequestStatus.PENDING)) {
-                throw new ConflictException("Only requests with status " +
-                        "'Pending' can be accepted or rejected.");
+                throw new ConflictException(INCORRECT_STATUS_MSG);
             }
         }
 
         List<RequestDto> confirmedRequests = new ArrayList<>();
         List<RequestDto> rejectedRequests = new ArrayList<>();
-
 
         if (requestStatusUpdateDto.getStatus() == StatusForUpdate.REJECTED) {
             requests.forEach(request -> {
@@ -119,8 +121,7 @@ public class RequestServiceImpl implements RequestService {
         }
 
         if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new ConflictException("Failed to accept request. " +
-                    "Reached max participant limit for event id = " + event.getId() + ".");
+            throw new ConflictException(LIMIT_IS_OVER_MSG);
         }
 
         requests.forEach(request -> {
@@ -145,35 +146,33 @@ public class RequestServiceImpl implements RequestService {
 
     private Event checkAndReturnEventInStorage(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(
-                () -> new NotFoundException(String.format("Event with id=%d was not found", eventId)));
+                () -> new NotFoundException(String.format(EVENT_NOT_FOUND_MSG, eventId)));
     }
 
     private User checkAndReturnUserInStorage(Long userId) {
         return userRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException(String.format("User with id=%d was not found", userId)));
+                () -> new NotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
     }
 
     private void checkRequestBeforeCreate(User user, Event event) {
         if (requestRepository.existsByRequesterIdAndEventId(user.getId(), event.getId())) {
-            throw new ConflictException((String.format("The request for user's " +
-                    "participation in tne event id=%d already exists", event.getId())));
+            throw new ConflictException((String.format(REQUEST_ALREADY_EXISTS_MSG, event.getId())));
         }
         if (event.getInitiator().getId().equals(user.getId())) {
-            throw new ConflictException("User cannot send participation request in self-published event");
+            throw new ConflictException(INCORRECT_REQUEST_MSG);
         }
         if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new ConflictException("Request can be made only for published events");
+            throw new ConflictException(REQUEST_FOR_NOT_PUBLIC_EVENT_MSG);
         }
         if (event.getParticipantLimit() > 0 &&
                 (event.getConfirmedRequests() >= event.getParticipantLimit())) {
-            throw new ConflictException("Participants limit reached");
+            throw new ConflictException(LIMIT_IS_OVER_MSG);
         }
     }
 
     private void checkUserInStorage(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(String.format("User with id=%d was not found", userId));
+            throw new NotFoundException(String.format(USER_NOT_FOUND_MSG, userId));
         }
     }
-
 }

@@ -9,6 +9,8 @@ import ru.practicum.error.exception.*;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.constants.Constants.*;
+
 /**
  * Класс обработчика возникающих исключений
  *
@@ -26,9 +28,8 @@ public class ErrorHandler {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ApiError handleNotFoundException(NotFoundException exception) {
-        String reason = "The required object was not found.";
         log.error(exception.getMessage());
-        return new ApiError(HttpStatus.NOT_FOUND.toString(), reason,
+        return new ApiError(HttpStatus.NOT_FOUND.toString(), NOT_FOUND_REASON,
                 exception.getMessage(), LocalDateTime.now());
     }
 
@@ -40,9 +41,8 @@ public class ErrorHandler {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ApiError handleBadRequestException(BadRequestException exception) {
-        String reason = "The required object was not found.";
         log.error(exception.getMessage());
-        return new ApiError(HttpStatus.BAD_REQUEST.toString(), reason,
+        return new ApiError(HttpStatus.BAD_REQUEST.toString(), BAD_REQUEST_REASON,
                 exception.getMessage(), LocalDateTime.now());
     }
 
@@ -54,9 +54,8 @@ public class ErrorHandler {
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public ApiError handleConflictException(ConflictException exception) {
-        String reason = "For the requested operation the conditions are not met.";
         log.error(exception.getMessage());
-        return new ApiError(HttpStatus.CONFLICT.toString(), reason,
+        return new ApiError(HttpStatus.CONFLICT.toString(), CONFLICT_REASON,
                 exception.getMessage(), LocalDateTime.now());
     }
 
@@ -68,9 +67,8 @@ public class ErrorHandler {
     @ExceptionHandler(AccessException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ApiError handleAccessException(AccessException exception) {
-        String reason = "The required object was not found.";
         log.error(exception.getMessage());
-        return new ApiError(HttpStatus.NOT_FOUND.toString(), reason,
+        return new ApiError(HttpStatus.NOT_FOUND.toString(), NOT_FOUND_REASON,
                 exception.getMessage(), LocalDateTime.now());
     }
 
@@ -82,9 +80,8 @@ public class ErrorHandler {
     @ExceptionHandler(UniqueNameCategoryException.class)
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public ApiError handleUniqueNameCategoryException(UniqueNameCategoryException exception) {
-        String reason = "Integrity constraint has been violated.";
         log.error(exception.getMessage());
-        return new ApiError(HttpStatus.CONFLICT.toString(), reason,
+        return new ApiError(HttpStatus.CONFLICT.toString(), CATEGORY_NOT_UNIQUE_NAME_REASON,
                 exception.getMessage(), LocalDateTime.now());
     }
 
@@ -96,9 +93,8 @@ public class ErrorHandler {
     @ExceptionHandler(InvalidEventStartTimeException.class)
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public ApiError handleInvalidEventStartTimeException(InvalidEventStartTimeException exception) {
-        String reason = "For the requested operation the conditions are not met.";
         log.error(exception.getMessage());
-        return new ApiError(HttpStatus.CONFLICT.toString(), reason,
+        return new ApiError(HttpStatus.CONFLICT.toString(), CONFLICT_REASON,
                 exception.getMessage(), LocalDateTime.now());
     }
 }

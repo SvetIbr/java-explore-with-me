@@ -8,6 +8,8 @@ import ru.practicum.user.dto.UserShortDto;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
+
 /**
  * Класс события с краткой информацией со свойствами <b>id</b>, <b>title</b>, <b>annotation</b>,
  * <b>category</b>, <b>paid</b>, <b>eventDate</b>, <b>initiator</b>, <b>confirmedRequests</b> и <b>views</b>
@@ -49,7 +51,7 @@ public class EventShortDto {
      * Поле дата и время на которые намечено событие
      */
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
 
     /**

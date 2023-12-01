@@ -15,6 +15,8 @@ import ru.practicum.error.exception.NotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.constants.Constants.COMPILATION_NOT_FOUND_MSG;
+
 @Service
 @RequiredArgsConstructor
 public class CompilationServiceImp implements CompilationService {
@@ -36,8 +38,7 @@ public class CompilationServiceImp implements CompilationService {
 
     public CompilationDto getCompById(Long compId) {
         return compilationMapper.toCompilationDto(compilationRepository.findById(compId).orElseThrow(
-                () -> new NotFoundException(String
-                        .format("Compilation with id=%d was not found", compId))));
+                () -> new NotFoundException(String.format(COMPILATION_NOT_FOUND_MSG, compId))));
     }
 
     public CompilationDto createComp(NewCompilationDto newCompilationDto) {
@@ -47,17 +48,15 @@ public class CompilationServiceImp implements CompilationService {
 
     public void deleteCompById(Long compId) {
         if (!compilationRepository.existsById(compId)) {
-            throw new NotFoundException(String
-                    .format("Compilation with id=%d was not found", compId));
+            throw new NotFoundException(String.format(COMPILATION_NOT_FOUND_MSG, compId));
         }
         compilationRepository.deleteById(compId);
     }
 
     public CompilationDto updateComp(UpdateCompilationDto updateCompilationDto, Long compId) {
-
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException(String
-                        .format("Compilation with id=%d was not found", compId)));
+                        .format(COMPILATION_NOT_FOUND_MSG, compId)));
 
         compilation = compilationMapper.update(updateCompilationDto, compilation);
 

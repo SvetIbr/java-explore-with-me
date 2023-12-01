@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
+
 /**
  * Класс административного (для администраторов сервиса) контроллера для работы с сервисом событий
  *
@@ -47,10 +49,10 @@ public class AdminEventsController {
                                                     @RequestParam(required = false) List<String> states,
                                                     @RequestParam(required = false) List<Long> categories,
                                                     @RequestParam(required = false)
-                                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                    @DateTimeFormat(pattern = DATE_TIME_FORMAT)
                                                     LocalDateTime rangeStart,
                                                     @RequestParam(required = false)
-                                                    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                    @DateTimeFormat(pattern = DATE_TIME_FORMAT)
                                                     LocalDateTime rangeEnd,
                                                     @RequestParam(defaultValue = "0") int from,
                                                     @RequestParam(defaultValue = "10") int size) {

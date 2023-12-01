@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.constants.Constants.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,19 +31,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     public CategoryDto createCat(NewCategoryDto newCategoryDto) {
-        if(categoryRepository.existsCategoryByName(newCategoryDto.getName())) {
-            throw new UniqueNameCategoryException("Категория с названием " + newCategoryDto.getName() +
-                    " уже существует!");
-        }
+        checkCategoryName(newCategoryDto.getName());
+
         Category category = categoryRepository.save(categoryMapper.toCategory(newCategoryDto));
+
         return categoryMapper.toCategoryDto(category);
     }
 
     @Transactional
     public CategoryDto updateCat(Long catId, CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(catId).orElseThrow(() ->
-                new NotFoundException(String.format("Category " +
-                "with id=%d was not found", catId)));
+        Category category = checkAndReturnCategoryInStorage(catId);
 
         if (categoryDto.getName() == null
                 || categoryDto.getName().isEmpty()
@@ -50,40 +49,45 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryMapper.toCategoryDto(category);
         }
 
-        if(categoryRepository.existsCategoryByName(categoryDto.getName())) {
-            throw new UniqueNameCategoryException("Категория с названием " + categoryDto.getName() +
-                    " уже существует!");
-        }
+        checkCategoryName(categoryDto.getName());
 
         category.setName(categoryDto.getName());
         category = categoryRepository.save(category);
         return categoryMapper.toCategoryDto(category);
     }
 
-
     public void deleteCatById(Long catId) {
         if (!categoryRepository.existsById(catId)) {
-            throw new NotFoundException(String.format("Category " +
-                    "with id=%d was not found", catId));
+            throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MSG, catId));
         }
 
         if (eventRepository.existsByCategoryId(catId)) {
-                throw new ConflictException("Category must not be assigned to any event.");
+            throw new ConflictException(CATEGORY_HAVE_EVENTS_MSG);
         }
         categoryRepository.deleteById(catId);
     }
 
     public List<CategoryDto> getCategories(Pageable pageable) {
-        List<CategoryDto> categories =  categoryRepository.findAll(pageable).stream()
+        List<CategoryDto> categories = categoryRepository.findAll(pageable).stream()
                 .map(categoryMapper::toCategoryDto)
                 .collect(Collectors.toList());
+
         return (!categories.isEmpty()) ? categories : new ArrayList<>();
     }
 
     public CategoryDto getCatById(Long catId) {
-        Category category = categoryRepository.findById(catId)
-                .orElseThrow(() -> new NotFoundException(String
-                        .format("Category with id=%d was not found", catId)));
+        Category category = checkAndReturnCategoryInStorage(catId);
         return categoryMapper.toCategoryDto(category);
+    }
+
+    private void checkCategoryName(String name) {
+        if (categoryRepository.existsCategoryByName(name)) {
+            throw new UniqueNameCategoryException(String.format(CATEGORY_NOT_UNIQUE_NAME_MSG, name));
+        }
+    }
+
+    private Category checkAndReturnCategoryInStorage(Long catId) {
+        return categoryRepository.findById(catId).orElseThrow(() ->
+                new NotFoundException(String.format(CATEGORY_NOT_FOUND_MSG, catId)));
     }
 }
