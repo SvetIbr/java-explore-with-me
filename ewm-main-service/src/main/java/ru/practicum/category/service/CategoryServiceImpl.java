@@ -74,8 +74,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public List<CategoryDto> getCategories(Pageable pageable) {
-        // Sort sort = Sort.by("id").ascending();
-        //Pageable pageable = PageRequest.of(from / size, size, sort);
         List<CategoryDto> categories =  categoryRepository.findAll(pageable).stream()
                 .map(categoryMapper::toCategoryDto)
                 .collect(Collectors.toList());

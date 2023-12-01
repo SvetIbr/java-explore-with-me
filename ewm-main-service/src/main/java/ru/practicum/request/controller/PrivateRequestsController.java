@@ -30,7 +30,7 @@ public class PrivateRequestsController {
      * Метод получения списка всех заявок на участие текущего пользователя в чужих событиях
      * из хранилища сервиса через запрос
      *
-     * @param userId - индентификатор пользователя, запрашивающего список
+     * @param userId - идентификатор пользователя, запрашивающего список
      * @return список объектов RequestDto {@link RequestDto}
      */
     @GetMapping
@@ -43,8 +43,8 @@ public class PrivateRequestsController {
     /**
      * Метод добавления заявки на участие в хранилище сервиса через запрос
      *
-     * @param userId  - индентификатор текущего пользователя
-     * @param eventId - индентификатор события
+     * @param userId  - идентификатор текущего пользователя
+     * @param eventId - идентификатор события
      * @return {@link RequestDto} и код ответа API 201
      */
     @PostMapping
@@ -58,8 +58,8 @@ public class PrivateRequestsController {
     /**
      * Метод отмены своей заявки на участие в хранилище сервиса через запрос
      *
-     * @param userId    - индентификатор текущего пользователя
-     * @param requestId - индентификатор заявки
+     * @param userId    - идентификатор текущего пользователя
+     * @param requestId - идентификатор заявки
      * @return {@link RequestDto}
      */
     @PatchMapping("/{requestId}/cancel")

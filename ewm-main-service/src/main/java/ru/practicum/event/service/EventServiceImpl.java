@@ -112,7 +112,6 @@ public class EventServiceImpl implements EventService {
         return eventFullDto;
     }
 
-    // добавление нового события
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
@@ -129,7 +128,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toEventFullDto(event);
     }
 
-    // получение событи, добавленных текущим пользователем
+    // получение событий, добавленных текущим пользователем
     public List<EventShortDto> getEventsByUser(Long userId, Pageable pageable) {
         checkUserInStorage(userId);
         Page<Event> events = eventRepository.findAllByInitiatorId(userId, pageable);
@@ -268,7 +267,7 @@ public class EventServiceImpl implements EventService {
                 .build();
     }
 
-    // получение подробной информации о событий по идентификатору для любого пользователя - только опубликованные!
+    // получение подробной информации о событии по идентификатору для любого пользователя - только опубликованные!
     public EventFullDto getEventById(Long id, HttpServletRequest request) {
         Event event = eventRepository.findByIdAndState(id, EventState.PUBLISHED).orElseThrow(
                 () -> new NotFoundException(String.format("Event with id=%d was not found", id)));

@@ -8,9 +8,19 @@ import ru.practicum.user.model.User;
 
 import java.util.List;
 
+/**
+ * Интерфейс хранилища всех пользователей
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
 public interface UserRepository extends JpaRepository<User, Long> {
-    //Page<User> findAllByIdIn(List<Integer> ids, Pageable pageable);
-
+    /**
+     * Метод получения списка всех пользователей по списку идентификаторов
+     *
+     * @param ids - список идентификаторов искомых пользователей
+     * @return список объектов User {@link User}
+     */
     @Query("SELECT u " +
             "FROM User u " +
             "WHERE u.id in(?1) " +

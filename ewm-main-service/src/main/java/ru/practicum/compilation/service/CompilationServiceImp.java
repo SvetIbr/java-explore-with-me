@@ -10,7 +10,6 @@ import ru.practicum.compilation.dto.UpdateCompilationDto;
 import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
-import ru.practicum.error.exception.ConflictException;
 import ru.practicum.error.exception.NotFoundException;
 
 import java.util.List;

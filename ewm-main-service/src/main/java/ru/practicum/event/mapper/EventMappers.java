@@ -14,18 +14,41 @@ import ru.practicum.event.model.Event;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.mapper.UserMapper;
 
-@Mapper(componentModel = "spring",uses = {UserMapper.class, CategoryService.class,
+/**
+ * Mapper-класс для преобразования объектов сервиса событий
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
+@Mapper(componentModel = "spring", uses = {UserMapper.class, CategoryService.class,
         CategoryMapper.class, RequestRepository.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EventMappers {
+    /**
+     * Метод преобразования объекта Event в EventFullDto
+     *
+     * @param event {@link Event}
+     * @return {@link EventFullDto}
+     */
     @Mapping(target = "location.lon", source = "lon")
     @Mapping(target = "location.lat", source = "lat")
     @Mapping(target = "views", constant = "0")
-    //@Mapping(target = "confirmedRequests", constant = "0")
     EventFullDto toEventFullDto(Event event);
 
+    /**
+     * Метод преобразования объекта Event в EventShortDto
+     *
+     * @param event {@link Event}
+     * @return {@link EventShortDto}
+     */
     EventShortDto toEventShortDto(Event event);
 
+    /**
+     * Метод преобразования объекта NewEventDto в Event
+     *
+     * @param newEventDto {@link NewEventDto}
+     * @return {@link Event}
+     */
     @Mapping(target = "lon", source = "location.lon")
     @Mapping(target = "lat", source = "location.lat")
     @Mapping(target = "state", constant = "PENDING")
@@ -33,6 +56,13 @@ public interface EventMappers {
     @Mapping(source = "eventDate", target = "eventDate", dateFormat = "yyyy-MM-dd HH:mm:ss")
     Event toEvent(NewEventDto newEventDto);
 
+    /**
+     * Метод обновления информации объекта Event из UpdateEventDto и Event
+     *
+     * @param updateEventDto {@link UpdateEventDto}
+     * @param event          {@link Event}
+     * @return {@link Event}
+     */
     @Mapping(source = "eventDate", target = "eventDate", dateFormat = "yyyy-MM-dd HH:mm:ss")
     Event updateEvent(UpdateEventDto updateEventDto, @MappingTarget Event event);
 }

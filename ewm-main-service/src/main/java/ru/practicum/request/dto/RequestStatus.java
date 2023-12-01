@@ -1,8 +1,14 @@
 package ru.practicum.request.dto;
 
-public enum RequestStatus { //Новый статус запроса на участие в событии текущего пользователя
+/**
+ * Класс списка статусов заявок на участие
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
+public enum RequestStatus {
     PENDING,
     CONFIRMED,
-    REJECTED, // отклоненное
-    CANCELED // отмененное
+    REJECTED,
+    CANCELED
 }
