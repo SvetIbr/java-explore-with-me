@@ -4,8 +4,16 @@ import lombok.*;
 import ru.practicum.event.model.Event;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+/**
+ * Класс подборки событий со свойствами <b>id</b>, <b>pinned</b>, <b>title</b> и <b>events</b>
+ * для работы с базой данных
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
 @Entity
 @Table(name = "compilations")
 @Getter
@@ -15,18 +23,30 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class Compilation {
+    /**
+     * Поле идентификатор
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
+    /**
+     * Поле список событий, входящих в подборку
+     */
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "events_compilations",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "compilation_id")
-    )
-    private List<Event> events;
+            joinColumns = @JoinColumn(name = "compilation_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    private Set<Event> events = new HashSet<>();
 
+    /**
+     * Поле заголовок
+     */
     private String title;
 
+    /**
+     * Поле закреплена ли подборка на главной странице сайта
+     */
+    @Column(columnDefinition = "boolean default false")
     private Boolean pinned;
 }

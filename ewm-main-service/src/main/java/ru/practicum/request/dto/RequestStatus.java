@@ -1,8 +1,8 @@
 package ru.practicum.request.dto;
 
-public enum RequestStatus {
+public enum RequestStatus { //Новый статус запроса на участие в событии текущего пользователя
     PENDING,
     CONFIRMED,
-    REJECTED,
-    CANCELED
+    REJECTED, // отклоненное
+    CANCELED // отмененное
 }

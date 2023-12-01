@@ -3,13 +3,11 @@ package ru.practicum.compilation.dto;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Класс подборки событий для добавления в хранилище со свойствами <b>pinned</b>,
+ * Класс подборки событий для обновления данных в хранилище со свойствами <b>pinned</b>,
  * <b>title</b> и <b>events</b> для работы через REST-интерфейс
  *
  * @author Светлана Ибраева
@@ -21,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NewCompilationDto {
+public class UpdateCompilationDto {
     /**
      * Поле список событий, входящих в подборку
      */
@@ -30,13 +28,11 @@ public class NewCompilationDto {
     /**
      * Поле закреплена ли подборка на главной странице сайта
      */
-    private Boolean pinned = false;
+    private Boolean pinned;
 
     /**
      * Поле заголовок
      */
-    @NotNull
-    @NotBlank
     @Length(min = 1, max = 50)
     private String title;
 }

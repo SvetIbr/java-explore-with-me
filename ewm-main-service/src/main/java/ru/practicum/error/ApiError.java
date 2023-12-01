@@ -1,18 +1,19 @@
 package ru.practicum.error;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-public class ApiError extends RuntimeException {
-    private final String reason;
-    private final LocalDateTime timeStamp;
+@AllArgsConstructor
+public class ApiError {
+    private String status;
+    private String reason;
+    private String message;
 
-    public ApiError(String message, String reason) {
-        super(message);
-        this.reason = reason;
-        this.timeStamp = LocalDateTime.now();
-    }
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 }
 

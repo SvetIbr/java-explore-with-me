@@ -3,10 +3,11 @@ package ru.practicum.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.location.dto.LocationDto;
+import ru.practicum.event.model.Location;
 
-import javax.persistence.Column;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,32 +18,32 @@ import javax.validation.constraints.NotNull;
 public class NewEventDto {
     @NotNull
     @Length(min = 20, max = 2000)
-    protected String annotation;
+    private String annotation;
 
     @NotNull
-    protected Long category;
+    private Long category;
 
     @NotNull
     @Length(min = 20, max = 7000)
-    protected String description;
+    private String description;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    protected String eventDate;
+    @Future
+    private LocalDateTime eventDate;
 
     @NotNull
-    protected LocationDto location;
+    private Location location;
 
-    @Column(columnDefinition = "boolean default false")
-    protected Boolean paid;
 
-    @Column(columnDefinition = "integer default 0")
-    protected Integer participantLimit;
+    private Boolean paid = false;
 
-    @Column(columnDefinition = "boolean default true")
-    protected Boolean requestModeration;
+
+    private Integer participantLimit = 0;
+
+    private Boolean requestModeration = true;
 
     @NotNull
     @Length(min = 3, max = 120)
-    protected String title;
+    private String title;
 }

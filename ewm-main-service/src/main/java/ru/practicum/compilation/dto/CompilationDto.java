@@ -3,9 +3,15 @@ package ru.practicum.compilation.dto;
 import lombok.*;
 import ru.practicum.event.dto.EventShortDto;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+ * Класс подборки событий со свойствами <b>id</b>, <b>pinned</b>, <b>title</b> и <b>events</b>
+ * для работы через REST-интерфейс
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
 @Getter
 @Setter
 @ToString
@@ -13,15 +19,23 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CompilationDto {
-
-    @NotNull
+    /**
+     * Поле идентификатор
+     */
     private Long id;
 
+    /**
+     * Поле список событий, входящих в подборку
+     */
     private List<EventShortDto> events;
 
-    @NotNull
+    /**
+     * Поле закреплена ли подборка на главной странице сайта
+     */
     private Boolean pinned;
 
-    @NotNull
+    /**
+     * Поле заголовок
+     */
     private String title;
 }

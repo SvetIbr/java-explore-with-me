@@ -1,14 +1,13 @@
 package ru.practicum.event.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.category.model.Category;
-import ru.practicum.location.model.Location;
-import ru.practicum.request.model.Request;
+import ru.practicum.event.enums.EventState;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "events")
@@ -29,42 +28,46 @@ public class Event {
     @JoinColumn(name = "category_id")
     private Category category;
 
-
-    @OneToMany(mappedBy = "event")
-    private List<Request> requests;
+    @Column(name = "confirmed_requests")
+    private Integer confirmedRequests;
 
     @Column(name = "event_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "initiator_id")
     private User initiator;
 
+    @Column(columnDefinition = "boolean default false")
     private Boolean paid;
 
     private String title;
 
     @Column(name = "created")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
 
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
+    @Column(name = "lon")
+    private double lon;
 
-    @Column(name = "participant_limit")
+    @Column(name = "lat")
+    private double lat;
+
+    @Column(name = "participant_limit", columnDefinition = "integer default 0")
     private Integer participantLimit;
 
 
     @Column(name = "published")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
 
 
-    @Column(name = "request_moderation")
+    @Column(name = "request_moderation", columnDefinition = "boolean default true")
     private Boolean requestModeration;
 
-
     @Enumerated(EnumType.STRING)
-    private EventStatus state;
+    private EventState state;
 }
