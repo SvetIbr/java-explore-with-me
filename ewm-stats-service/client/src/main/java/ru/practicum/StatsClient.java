@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Класс  реализации основных REST-методов с использованием RestTemplate
+ * Класс реализации основных REST-методов с использованием RestTemplate
  * для взаимодействия с основным сервисом приложения
  *
  * @author Светлана Ибраева
@@ -46,9 +46,9 @@ public class StatsClient extends BaseClient {
         Map<String, Object> params = Map.of(
                 "start", URLEncoder.encode(start.format(DateTimeFormatter.ofPattern(dateTimeFormat)), StandardCharsets.UTF_8),
                 "end", URLEncoder.encode(end.format(DateTimeFormatter.ofPattern(dateTimeFormat)), StandardCharsets.UTF_8),
-                "unique", unique
-        );
-        return get(PREFIX_STATS+"?start={start}&end={end}" + url + "&unique={unique}", params);
+                "unique", unique);
+
+        return get(PREFIX_STATS + "?start={start}&end={end}" + url + "&unique={unique}", params);
     }
 //        Map<String, Object> parameters = Map.of(
 //                "start", URLEncoder.encode(start.format(DateTimeFormatter.ofPattern(dateTimeFormat)), StandardCharsets.UTF_8),
