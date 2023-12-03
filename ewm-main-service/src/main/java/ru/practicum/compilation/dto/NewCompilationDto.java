@@ -30,7 +30,7 @@ public class NewCompilationDto {
     /**
      * Поле закреплена ли подборка на главной странице сайта
      */
-    private Boolean pinned = false;
+    private boolean pinned;
 
     /**
      * Поле заголовок

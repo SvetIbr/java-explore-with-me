@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.error.exception.ConflictException;
 import ru.practicum.error.exception.NotFoundException;
 import ru.practicum.user.dto.UserDto;
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    @Transactional
     public UserDto createUser(UserDto userDto) {
         User user = userMapper.toUser(userDto);
         User userToSave;
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserDto(userToSave);
     }
 
+    @Transactional
     public void deleteUserById(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(String.format(USER_NOT_FOUND_MSG, userId));
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
+    @Transactional(readOnly = true)
     public List<UserDto> getUsers(List<Long> ids, Pageable pageable) {
         Page<User> users;
         if (ids == null) {

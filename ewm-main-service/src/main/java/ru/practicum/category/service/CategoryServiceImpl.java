@@ -15,7 +15,6 @@ import ru.practicum.error.exception.NotFoundException;
 import ru.practicum.error.exception.UniqueNameCategoryException;
 import ru.practicum.event.repository.EventRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toCategoryDto(category);
     }
 
+    @Transactional
     public void deleteCatById(Long catId) {
         if (!categoryRepository.existsById(catId)) {
             throw new NotFoundException(String.format(CATEGORY_NOT_FOUND_MSG, catId));
@@ -67,14 +67,14 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.deleteById(catId);
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryDto> getCategories(Pageable pageable) {
-        List<CategoryDto> categories = categoryRepository.findAll(pageable).stream()
+        return  categoryRepository.findAll(pageable).stream()
                 .map(categoryMapper::toCategoryDto)
                 .collect(Collectors.toList());
-
-        return (!categories.isEmpty()) ? categories : new ArrayList<>();
     }
 
+    @Transactional(readOnly = true)
     public CategoryDto getCatById(Long catId) {
         Category category = checkAndReturnCategoryInStorage(catId);
         return categoryMapper.toCategoryDto(category);

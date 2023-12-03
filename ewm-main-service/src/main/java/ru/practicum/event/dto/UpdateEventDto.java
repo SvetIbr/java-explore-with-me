@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.Length;
 import ru.practicum.event.enums.StateAction;
 import ru.practicum.event.model.Location;
 
-import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Future;
@@ -62,19 +61,16 @@ public class UpdateEventDto {
     /**
      * Поле нужно ли оплачивать участие
      */
-    @Column(columnDefinition = "boolean default false")
     private Boolean paid;
 
     /**
      * Поле ограничение на количество участников (значение 0 - означает отсутствие ограничения)
      */
-    @Column(columnDefinition = "integer default 0")
     private Integer participantLimit;
 
     /**
      * Поле нужна ли пре-модерация заявок на участие
      */
-    @Column(columnDefinition = "boolean default true")
     private Boolean requestModeration;
 
     /**

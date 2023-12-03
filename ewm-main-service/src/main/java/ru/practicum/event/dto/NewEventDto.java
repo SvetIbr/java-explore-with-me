@@ -63,12 +63,12 @@ public class NewEventDto {
     /**
      * Поле нужно ли оплачивать участие
      */
-    private Boolean paid = false;
+    private boolean paid;
 
     /**
      * Поле ограничение на количество участников (значение 0 - означает отсутствие ограничения)
      */
-    private Integer participantLimit = 0;
+    private int participantLimit;
 
     /**
      * Поле нужна ли пре-модерация заявок на участие

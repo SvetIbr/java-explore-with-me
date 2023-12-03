@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationDto;
@@ -23,6 +24,7 @@ public class CompilationServiceImp implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final CompilationMapper compilationMapper;
 
+    @Transactional(readOnly = true)
     public List<CompilationDto> getCompilations(Boolean pinned, Pageable pageable) {
         Page<Compilation> result;
         if (pinned != null) {
@@ -36,16 +38,19 @@ public class CompilationServiceImp implements CompilationService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public CompilationDto getCompById(Long compId) {
         return compilationMapper.toCompilationDto(compilationRepository.findById(compId).orElseThrow(
                 () -> new NotFoundException(String.format(COMPILATION_NOT_FOUND_MSG, compId))));
     }
 
+    @Transactional
     public CompilationDto createComp(NewCompilationDto newCompilationDto) {
         return compilationMapper.toCompilationDto(compilationRepository.save(compilationMapper
                 .toCompilation(newCompilationDto)));
     }
 
+    @Transactional
     public void deleteCompById(Long compId) {
         if (!compilationRepository.existsById(compId)) {
             throw new NotFoundException(String.format(COMPILATION_NOT_FOUND_MSG, compId));
@@ -53,6 +58,7 @@ public class CompilationServiceImp implements CompilationService {
         compilationRepository.deleteById(compId);
     }
 
+    @Transactional
     public CompilationDto updateComp(UpdateCompilationDto updateCompilationDto, Long compId) {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException(String

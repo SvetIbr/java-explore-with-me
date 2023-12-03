@@ -5,6 +5,7 @@ import ru.practicum.event.model.Event;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -48,5 +49,18 @@ public class Compilation {
      * Поле закреплена ли подборка на главной странице сайта
      */
     @Column(columnDefinition = "boolean default false")
-    private Boolean pinned;
+    private boolean pinned;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Compilation that = (Compilation) o;
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title);
+    }
 }

@@ -33,6 +33,7 @@ public class RequestServiceImpl implements RequestService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public RequestDto createReq(Long userId, Long eventId) {
         Event event = checkAndReturnEventInStorage(eventId);
 
@@ -67,6 +68,7 @@ public class RequestServiceImpl implements RequestService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public RequestDto cancelReq(Long userId, Long requestId) {
         checkUserInStorage(userId);
 
@@ -84,6 +86,7 @@ public class RequestServiceImpl implements RequestService {
         return requestMapper.toRequestDto(requestRepository.save(request));
     }
 
+    @Transactional
     public RequestsResultStatusDto updateRequestsStatusByEvent(RequestStatusUpdateDto
                                                                        requestStatusUpdateDto,
                                                                Event event) {

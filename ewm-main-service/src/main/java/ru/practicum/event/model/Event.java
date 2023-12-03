@@ -8,6 +8,7 @@ import ru.practicum.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
 
@@ -71,7 +72,6 @@ public class Event {
     /**
      * Поле нужно ли оплачивать участие
      */
-    @Column(columnDefinition = "boolean default false")
     private Boolean paid;
 
     /**
@@ -106,7 +106,7 @@ public class Event {
     /**
      * Поле ограничение на количество участников (значение 0 - означает отсутствие ограничения)
      */
-    @Column(name = "participant_limit", columnDefinition = "integer default 0")
+    @Column(name = "participant_limit")
     private Integer participantLimit;
 
     /**
@@ -119,7 +119,7 @@ public class Event {
     /**
      * Поле нужна ли пре-модерация заявок на участие
      */
-    @Column(name = "request_moderation", columnDefinition = "boolean default true")
+    @Column(name = "request_moderation")
     private Boolean requestModeration;
 
     /**
@@ -127,4 +127,20 @@ public class Event {
      */
     @Enumerated(EnumType.STRING)
     private EventState state;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return Objects.equals(id, event.id)
+                && Objects.equals(annotation, event.annotation)
+                && Objects.equals(title, event.title)
+                && Objects.equals(description, event.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, annotation, title, description);
+    }
 }

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.error.exception.*;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventSort;
@@ -26,7 +27,6 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,6 +46,7 @@ public class EventServiceImpl implements EventService {
     private final RequestService requestService;
     private final EventStatService eventStatService;
 
+    @Transactional(readOnly = true)
     public List<EventFullDto> getEventsByParametersForAdmin(List<Long> users,
                                                             List<String> states,
                                                             List<Long> categories,
@@ -130,6 +131,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toEventFullDto(event);
     }
 
+    @Transactional(readOnly = true)
     public List<EventShortDto> getEventsByUser(Long userId, Pageable pageable) {
         checkUserInStorage(userId);
 
@@ -147,6 +149,7 @@ public class EventServiceImpl implements EventService {
         return loadViewsToShortEvent(views, userEvents);
     }
 
+    @Transactional(readOnly = true)
     public EventFullDto getEventByIdForInitiator(Long userId, Long eventId) {
         checkUserInStorage(userId);
 
@@ -190,6 +193,7 @@ public class EventServiceImpl implements EventService {
         return eventFullDto;
     }
 
+    @Transactional(readOnly = true)
     public List<RequestDto> getRequestsByEvent(Long userId, Long eventId) {
         checkUserInStorage(userId);
 
@@ -219,6 +223,7 @@ public class EventServiceImpl implements EventService {
         return requestService.updateRequestsStatusByEvent(requestStatusUpdateDto, event);
     }
 
+    @Transactional(readOnly = true)
     public List<EventShortDto> getEventsByParametersForUsers(String text,
                                                              List<Long> categories,
                                                              Boolean paid,
@@ -254,6 +259,7 @@ public class EventServiceImpl implements EventService {
         return loadViewsToShortEvent(views, eventShortDtos);
     }
 
+    @Transactional(readOnly = true)
     public EventFullDto getEventById(Long id, HttpServletRequest request) {
         Event event = eventRepository.findByIdAndState(id, EventState.PUBLISHED).orElseThrow(
                 () -> new NotFoundException(String.format(EVENT_NOT_FOUND_MSG, id)));

@@ -7,6 +7,7 @@ import ru.practicum.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Класс заявки на участие в событии со свойствами <b>id</b>, <b>event</b>, <b>created</b>,
@@ -55,4 +56,17 @@ public class Request {
      */
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Request request = (Request) o;
+        return Objects.equals(id, request.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

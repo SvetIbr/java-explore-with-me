@@ -66,9 +66,7 @@ public class EventStatService {
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Ошибка при загрузке данных из сервиса статистики");
             }
-            for (Long event : events) {
-                views.put(event, 0L);
-            }
+
             if (!stats.isEmpty()) {
                 for (ViewStats stat : stats) {
                     views.put(Long.parseLong(stat.getUri().split("/", 0)[2]),

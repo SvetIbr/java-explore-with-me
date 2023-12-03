@@ -89,7 +89,7 @@ public class EventFullDto {
     /**
      * Поле дата создания
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime createdOn;
 
     /**
@@ -111,13 +111,12 @@ public class EventFullDto {
     /**
      * Поле количество просмотрев события
      */
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer views;
 
     /**
      * Поле дата и время публикации события
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime publishedOn;
 }
