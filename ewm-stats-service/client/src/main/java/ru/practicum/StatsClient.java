@@ -10,10 +10,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Класс  реализации основных REST-методов с использованием RestTemplate
+ * Класс реализации основных REST-методов с использованием RestTemplate
  * для взаимодействия с основным сервисом приложения
  *
  * @author Светлана Ибраева
@@ -22,9 +23,7 @@ import java.util.Map;
 public class StatsClient extends BaseClient {
     private static final String PREFIX_STATS = "/stats";
     private static final String PREFIX_HIT = "/hit";
-
-    @Value("${format.pattern.datetime}")
-    public String dateTimeFormat;
+    public static final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
     public StatsClient(@Value("${stats.server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
@@ -39,14 +38,16 @@ public class StatsClient extends BaseClient {
         return post(PREFIX_HIT, hitDto);
     }
 
-    public ResponseEntity<Object> get(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
-        Map<String, Object> parameters = Map.of(
-                "start", URLEncoder.encode(start.format(DateTimeFormatter.ofPattern(dateTimeFormat)),
-                        StandardCharsets.UTF_8),
-                "end", URLEncoder.encode(end.format(DateTimeFormatter.ofPattern(dateTimeFormat)),
-                        StandardCharsets.UTF_8),
-                "uris", uris,
+    public ResponseEntity<Object> get(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        StringBuilder url = new StringBuilder();
+        for (String uri : uris) {
+            url.append("&uris=").append(uri);
+        }
+        Map<String, Object> params = Map.of(
+                "start", URLEncoder.encode(start.format(DateTimeFormatter.ofPattern(dateTimeFormat)), StandardCharsets.UTF_8),
+                "end", URLEncoder.encode(end.format(DateTimeFormatter.ofPattern(dateTimeFormat)), StandardCharsets.UTF_8),
                 "unique", unique);
-        return get(PREFIX_STATS + "?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+
+        return get(PREFIX_STATS + "?start={start}&end={end}" + url + "&unique={unique}", params);
     }
 }

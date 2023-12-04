@@ -12,6 +12,8 @@ import ru.practicum.service.StatsService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -65,8 +67,8 @@ public class StatsController {
                                     @RequestParam(defaultValue = "false") boolean unique) {
         log.info("GET: запрос статистики с параметрами: {}, {}, {}, {}", start, end, uris, unique);
 
-        LocalDateTime start1 = LocalDateTime.parse(start, formatter);
-        LocalDateTime end1 = LocalDateTime.parse(end, formatter);
+        LocalDateTime start1 = LocalDateTime.parse(URLDecoder.decode(start, StandardCharsets.UTF_8), formatter);
+        LocalDateTime end1 = LocalDateTime.parse(URLDecoder.decode(end, StandardCharsets.UTF_8), formatter);
         if (end1.isBefore(start1)) {
             throw new InvalidDateTimeException("start after end");
         }

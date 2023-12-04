@@ -15,7 +15,6 @@ public class BaseClient {
         this.rest = rest;
     }
 
-
     protected ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {
         return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
     }
@@ -25,21 +24,21 @@ public class BaseClient {
     }
 
     private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path,
-                                                          @Nullable Map<String, Object> parameters,
-                                                          @Nullable T body) {
+                                                                   @Nullable Map<String, Object> parameters,
+                                                                   @Nullable T body) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
 
-        ResponseEntity<Object> statsServerResponse;
+        ResponseEntity<Object> response;
         try {
             if (parameters != null) {
-                statsServerResponse = rest.exchange(path, method, requestEntity, Object.class, parameters);
+                response = rest.exchange(path, method, requestEntity, Object.class, parameters);
             } else {
-                statsServerResponse = rest.exchange(path, method, requestEntity, Object.class);
+                response = rest.exchange(path, method, requestEntity, Object.class);
             }
         } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
-        return prepareGatewayResponse(statsServerResponse);
+        return prepareGatewayResponse(response);
     }
 
     private HttpHeaders defaultHeaders() {
@@ -51,6 +50,9 @@ public class BaseClient {
 
     private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {
 
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response;
+        }
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
 
         if (response.hasBody()) {
