@@ -97,4 +97,12 @@ public class ErrorHandler {
         return new ApiError(HttpStatus.CONFLICT.toString(), CONFLICT_REASON,
                 exception.getMessage(), LocalDateTime.now());
     }
+
+    @ExceptionHandler(AccessException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ApiError handleCommentBlockedException(CommentBlockedException exception) {
+        log.error(exception.getMessage());
+        return new ApiError(HttpStatus.NOT_FOUND.toString(), NOT_FOUND_REASON,
+                exception.getMessage(), LocalDateTime.now());
+    }
 }

@@ -3,10 +3,12 @@ package ru.practicum.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.user.dto.UserShortDto;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
 
@@ -76,4 +78,9 @@ public class EventShortDto {
      * Поле количество просмотрев события
      */
     private Integer views;
+
+    /**
+     * Поле комментарии к событию
+     */
+    private List<CommentDto> comments;
 }
