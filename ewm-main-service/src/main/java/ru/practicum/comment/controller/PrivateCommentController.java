@@ -13,15 +13,31 @@ import ru.practicum.comment.service.CommentService;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Класс закрытого (доступна только авторизованным пользователям) контроллера
+ * для работы с сервисом комментариев
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
 @Slf4j
 @RestController
 @Validated
 @RequiredArgsConstructor
 @RequestMapping(path = "/users/{userId}")
 public class PrivateCommentController {
+    /**
+     * Поле сервис для работы с хранилищем комментариев
+     */
     private final CommentService commentService;
 
-    // получить все свои комментарии
+    /**
+     * Метод получения списка всех комментариев, добавленных текущим пользователем,
+     * из хранилища сервиса через запрос
+     *
+     * @param userId - идентификатор пользователя, запрашивающего список
+     * @return список объектов CommentDto {@link CommentDto}
+     */
     @GetMapping(value = "/comments")
     public List<CommentDto> getAllCommentsForAuthor(@PathVariable Long userId) {
         log.info("GET: запрос на все оставленные комментарии от пользователя " +
@@ -29,7 +45,13 @@ public class PrivateCommentController {
         return commentService.getAllCommentsForAuthor(userId);
     }
 
-    // удалить свой комментарий по идентификатору
+    /**
+     * Метод удаления комментария, добавленного текущим пользователем, по идентификатору
+     * из хранилища сервиса через запрос
+     *
+     * @param userId    - идентификатор автора
+     * @param commentId - идентификатор комментария
+     */
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/comments/{commentId}")
     public void deleteComById(@PathVariable Long userId, @PathVariable Long commentId) {
@@ -37,7 +59,14 @@ public class PrivateCommentController {
         commentService.deleteComById(userId, commentId);
     }
 
-    //только зарегистрированные пользователи могут оставить коммент и только к опубликованным событиям
+    /**
+     * Метод добавления комментария в хранилище сервиса через запрос
+     *
+     * @param userId        - идентификатор автора
+     * @param eventId       - идентификатор события, к которому оставляют комментарий
+     * @param newCommentDto - информация о новом комментарии {@link NewCommentDto}
+     * @return копию объекта CommentDto {@link CommentDto} с добавленными из хранилища данными и статус 201
+     */
     @PostMapping(value = "/events/{eventId}/comments")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addComment(@PathVariable Long userId, @PathVariable Long eventId,
@@ -47,14 +76,30 @@ public class PrivateCommentController {
         return commentService.addComment(userId, eventId, newCommentDto);
     }
 
-    // получить все свои комментарии к конкретному событию
+    /**
+     * Метод получения комментариев текущего пользователя, оставленных к конкретному событию,
+     * из хранилища сервиса через запрос
+     *
+     * @param userId  - идентификатор автора
+     * @param eventId - идентификатор события
+     * @return список объектов CommentDto {@link CommentDto}
+     */
     @GetMapping(value = "/events/{eventId}/comments")
     public List<CommentDto> getAllUserCommentsByEventId(@PathVariable Long eventId, @PathVariable Long userId) {
         log.info("GET: запрос на все комментарии пользователя {}, оставленные к событию {}", userId, eventId);
         return commentService.getAllCommentsForAuthorByEventId(userId, eventId);
     }
 
-    // обновить можно только свой комментарий
+    /**
+     * Метод обновления информации конкретного комментария текущего пользователя,
+     * оставленного к конкретному событию, в хранилище сервиса через запрос
+     *
+     * @param userId           - идентификатор автора
+     * @param eventId          - идентификатор события
+     * @param commentId        - идентификатор комментария
+     * @param updateCommentDto - данные для обновления
+     * @return объект CommentDto {@link CommentDto} с обновленными полями
+     */
     @PatchMapping(value = "/events/{eventId}/comments/{commentId}")
     public CommentDto updateComment(@PathVariable Long userId, @PathVariable Long eventId,
                                     @PathVariable Long commentId,

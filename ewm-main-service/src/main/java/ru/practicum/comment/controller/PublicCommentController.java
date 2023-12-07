@@ -12,21 +12,47 @@ import ru.practicum.comment.service.CommentService;
 
 import java.util.List;
 
+/**
+ * Класс публичного (доступна без регистрации любому пользователю сети) контроллера
+ * для работы с сервисом комментариев
+ *
+ * @author Светлана Ибраева
+ * @version 1.0
+ */
 @Slf4j
 @RestController
 @Validated
 @RequiredArgsConstructor
 @RequestMapping(path = "events/{eventId}/comments")
 public class PublicCommentController {
+    /**
+     * Поле сервис для работы с хранилищем комментариев
+     */
     private final CommentService commentService;
 
-    // увидеть все комментарии к событию - только опубликованные события
+    /**
+     * Метод получения списка всех комментариев, оставленных к конкретному событию,
+     * из хранилища сервиса через запрос (только у опубликованных событий и
+     * только не заблокированные комментарии)
+     *
+     * @param eventId - идентификатор события
+     * @return список объектов CommentDto {@link CommentDto}
+     */
     @GetMapping
     public List<CommentDto> getAllCommentsByEvent(@PathVariable Long eventId) {
         log.info("GET: запрос на комментарии к событию по идентификатору {}", eventId);
         return commentService.getAllCommentsByEvent(eventId);
     }
 
+    /**
+     * Метод получения комментария по идентификатору, оставленного к конкретному событию,
+     * из хранилища сервиса через запрос (только у опубликованных событий и
+     * только не заблокированные комментарии)
+     *
+     * @param eventId   - идентификатор события
+     * @param commentId - идентификатор комментария
+     * @return список объектов CommentDto {@link CommentDto}
+     */
     @GetMapping(value = "/{commentId}")
     public CommentDto getComById(@PathVariable Long eventId, @PathVariable Long commentId) {
         log.info("GET: запрос на комментарий {} к событию {}", commentId, eventId);
