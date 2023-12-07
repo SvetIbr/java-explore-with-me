@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.comment.mapper.CommentMapper;
+import ru.practicum.comment.repository.CommentRepository;
 import ru.practicum.error.exception.*;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventSort;
@@ -45,6 +47,8 @@ public class EventServiceImpl implements EventService {
     private final RequestMapper requestMapper;
     private final RequestService requestService;
     private final EventStatService eventStatService;
+    private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     @Transactional(readOnly = true)
     public List<EventFullDto> getEventsByParametersForAdmin(List<Long> users,
@@ -68,7 +72,7 @@ public class EventServiceImpl implements EventService {
                 .map(EventFullDto::getId)
                 .collect(Collectors.toList()));
 
-        return loadViewsToFullEvent(views, events);
+        return loadViewsAndCommentsToFullEvents(views, events);
     }
 
     @Transactional
@@ -106,9 +110,7 @@ public class EventServiceImpl implements EventService {
 
         EventFullDto eventFullDto = eventMapper.toEventFullDto(event);
 
-        Map<Long, Long> views = eventStatService.getEventsViews(List.of(eventId));
-
-        eventFullDto.setViews(Math.toIntExact(views.getOrDefault(eventFullDto.getId(), 0L)));
+        loadViewsAndCommentsToFullEvent(eventFullDto);
 
         return eventFullDto;
     }
@@ -127,8 +129,10 @@ public class EventServiceImpl implements EventService {
         event.setInitiator(initiator);
         event.setCreatedOn(LocalDateTime.now());
         event = eventRepository.save(event);
+        EventFullDto eventFullDto = eventMapper.toEventFullDto(event);
+        eventFullDto.setComments(new ArrayList<>());
 
-        return eventMapper.toEventFullDto(event);
+        return eventFullDto;
     }
 
     @Transactional(readOnly = true)
@@ -146,7 +150,7 @@ public class EventServiceImpl implements EventService {
                 .map(EventShortDto::getId)
                 .collect(Collectors.toList()));
 
-        return loadViewsToShortEvent(views, userEvents);
+        return loadViewsAndCommentsToShortEvents(views, userEvents);
     }
 
     @Transactional(readOnly = true)
@@ -159,6 +163,8 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> views = eventStatService.getEventsViews(List.of(eventId));
         EventFullDto eventFullDto = eventMapper.toEventFullDto(event);
         eventFullDto.setViews(Math.toIntExact(views.getOrDefault(eventFullDto.getId(), 0L)));
+        eventFullDto.setComments(commentRepository.findAllByEventId(eventFullDto.getId())
+                .stream().map(commentMapper::toCommentShortDto).collect(Collectors.toList()));
 
         return eventFullDto;
     }
@@ -189,6 +195,8 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> views = eventStatService.getEventsViews(List.of(eventId));
         EventFullDto eventFullDto = eventMapper.toEventFullDto(eventRepository.save(event));
         eventFullDto.setViews(Math.toIntExact(views.getOrDefault(eventFullDto.getId(), 0L)));
+        eventFullDto.setComments(commentRepository.findAllByEventId(eventFullDto.getId())
+                .stream().map(commentMapper::toCommentShortDto).collect(Collectors.toList()));
 
         return eventFullDto;
     }
@@ -256,7 +264,7 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> views = eventStatService.getEventsViews(events.stream()
                 .map(Event::getId).collect(Collectors.toList()));
 
-        return loadViewsToShortEvent(views, eventShortDtos);
+        return loadViewsAndCommentsToShortEvents(views, eventShortDtos);
     }
 
     @Transactional(readOnly = true)
@@ -268,9 +276,7 @@ public class EventServiceImpl implements EventService {
 
         eventStatService.sendHit(request);
 
-        Map<Long, Long> views = eventStatService.getEventsViews(List.of(id));
-        eventFullDto.setViews(Math.toIntExact(views
-                .getOrDefault(eventFullDto.getId(), 0L)));
+        loadViewsAndCommentsToFullEvent(eventFullDto);
 
         return eventFullDto;
     }
@@ -334,7 +340,6 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAll(predicate, pageable).toList();
     }
 
-
     private Event cancelEvent(Event event) {
         event.setState(EventState.CANCELED);
         return eventRepository.save(event);
@@ -384,19 +389,33 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private List<EventFullDto> loadViewsToFullEvent(Map<Long, Long> views,
-                                                    List<EventFullDto> events) {
+    private List<EventFullDto> loadViewsAndCommentsToFullEvents(Map<Long, Long> views,
+                                                                List<EventFullDto> events) {
         for (EventFullDto cur : events) {
             cur.setViews(Math.toIntExact(views.getOrDefault(cur.getId(), 0L)));
+            cur.setComments(commentRepository.findAllByEventId(cur.getId())
+                    .stream().map(commentMapper::toCommentShortDto)
+                    .filter(comment -> comment.getIsBlocked() == null || !comment.getIsBlocked())
+                    .collect(Collectors.toList()));
         }
         return events;
     }
 
-    private List<EventShortDto> loadViewsToShortEvent(Map<Long, Long> views,
-                                                      List<EventShortDto> events) {
+    private List<EventShortDto> loadViewsAndCommentsToShortEvents(Map<Long, Long> views,
+                                                                  List<EventShortDto> events) {
         for (EventShortDto cur : events) {
             cur.setViews(Math.toIntExact(views.getOrDefault(cur.getId(), 0L)));
+            cur.setComments(commentRepository.findCountCommentByEventId(cur.getId()));
         }
         return events;
+    }
+
+    private void loadViewsAndCommentsToFullEvent(EventFullDto eventFullDto) {
+        Map<Long, Long> views = eventStatService.getEventsViews(List.of(eventFullDto.getId()));
+        eventFullDto.setViews(Math.toIntExact(views.getOrDefault(eventFullDto.getId(), 0L)));
+        eventFullDto.setComments(commentRepository.findAllByEventId(eventFullDto.getId())
+                .stream().map(commentMapper::toCommentShortDto)
+                .filter(comment -> comment.getIsBlocked() == null || !comment.getIsBlocked())
+                .collect(Collectors.toList()));
     }
 }

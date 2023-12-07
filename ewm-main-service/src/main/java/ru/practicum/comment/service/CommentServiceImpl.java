@@ -16,15 +16,19 @@ import ru.practicum.error.exception.BadRequestException;
 import ru.practicum.error.exception.CommentBlockedException;
 import ru.practicum.error.exception.ConflictException;
 import ru.practicum.error.exception.NotFoundException;
+import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.enums.EventState;
+import ru.practicum.event.mapper.EventMappers;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.event.service.EventStatService;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ru.practicum.constants.Constants.*;
@@ -38,14 +42,16 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final EventMappers eventMapper;
+    private final EventStatService eventStatService;
 
     public List<CommentDto> getAllCommentsByEvent(Long eventId) {
         checkEventInStorage(eventId);
 
         return commentRepository.findAllByEventId(eventId)
                 .stream()
-                .filter(comment -> !comment.getIsBlocked())
-                .map(commentMapper::toCommentDto)
+                .filter(comment -> comment.getIsBlocked() == null || !comment.getIsBlocked())
+                .map(this::loadViewsAndCommentsToShortEventDto)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
         return getCommentsByParameters(text, users, events, onlyUnlocked, onlyBlocked,
                 rangeStart, rangeEnd, pageable)
                 .stream()
-                .map(commentMapper::toCommentDto)
+                .map(this::loadViewsAndCommentsToShortEventDto)
                 .collect(Collectors.toList());
     }
 
@@ -69,14 +75,20 @@ public class CommentServiceImpl implements CommentService {
         if (ids != null && !ids.isEmpty()) {
             List<Comment> comments = commentRepository.findAllById(ids);
             for (Comment cur : comments) {
-                if (cur.getIsBlocked()) {
-                    throw new ConflictException(COMMENT_ALREADY_BLOCKED_MSG);
+                if (cur.getIsBlocked() != null) {
+                    if (cur.getIsBlocked()) {
+                        throw new ConflictException(COMMENT_ALREADY_BLOCKED_MSG);
+                    }
                 }
                 cur.setIsBlocked(true);
+                commentRepository.save(cur);
             }
-            return comments.stream().map(commentMapper::toCommentDto).collect(Collectors.toList());
+            return comments.stream()
+                    .map(this::loadViewsAndCommentsToShortEventDto)
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
     }
 
     public CommentDto addComment(Long userId, Long eventId, NewCommentDto newCommentDto) {
@@ -90,7 +102,9 @@ public class CommentServiceImpl implements CommentService {
         comment.setCreated(LocalDateTime.now());
         comment.setAuthor(author);
         comment.setEvent(event);
-        return commentMapper.toCommentDto(commentRepository.save(comment));
+        comment = commentRepository.save(comment);
+
+        return loadViewsAndCommentsToShortEventDto(comment);
     }
 
     public CommentDto updateComment(Long commentId, Long userId, Long eventId,
@@ -99,25 +113,40 @@ public class CommentServiceImpl implements CommentService {
         checkUserInStorage(userId);
         Comment comment = commentRepository.findByIdAndAuthorIdAndEventId(commentId, userId, eventId)
                 .orElseThrow(() -> new NotFoundException(String.format(COMMENT_NOT_FOUND_MSG, commentId)));
+        if (comment.getIsBlocked() != null && comment.getIsBlocked()) {
+            throw new CommentBlockedException(COMMENT_BLOCK_MSG);
+        }
 
         comment = commentMapper.updateComment(updateCommentDto, comment);
         comment.setIsChanged(true);
         comment.setCreated(LocalDateTime.now());
-        return commentMapper.toCommentDto(commentRepository.save(comment));
+        comment = commentRepository.save(comment);
+        return loadViewsAndCommentsToShortEventDto(comment);
+    }
+
+    private CommentDto loadViewsAndCommentsToShortEventDto(Comment comment) {
+        CommentDto commentDto = commentMapper.toCommentDto(comment);
+        EventShortDto eventShortDto = eventMapper.toEventShortDto(comment.getEvent());
+        Map<Long, Long> views = eventStatService.getEventsViews(List.of(eventShortDto.getId()));
+        eventShortDto.setViews(Math.toIntExact(views
+                .getOrDefault(eventShortDto.getId(), 0L)));
+        eventShortDto.setComments(commentRepository.findCountCommentByEventId(eventShortDto.getId()));
+        commentDto.setEvent(eventShortDto);
+        return commentDto;
     }
 
     public List<CommentDto> getAllCommentsForAuthorByEventId(Long userId, Long eventId) {
         checkEventInStorage(eventId);
         checkUserInStorage(userId);
         return commentRepository.findAllByEventIdAndAuthorId(eventId, userId).stream()
-                .map(commentMapper::toCommentDto)
+                .map(this::loadViewsAndCommentsToShortEventDto)
                 .collect(Collectors.toList());
     }
 
     public List<CommentDto> getAllCommentsForAuthor(Long userId) {
         checkUserInStorage(userId);
         return commentRepository.findAllByAuthorId(userId).stream()
-                .map(commentMapper::toCommentDto)
+                .map(this::loadViewsAndCommentsToShortEventDto)
                 .collect(Collectors.toList());
     }
 
@@ -125,17 +154,24 @@ public class CommentServiceImpl implements CommentService {
         checkEventInStorage(eventId);
         Comment comment = commentRepository.findByIdAndEventId(commentId, eventId)
                 .orElseThrow(() -> new NotFoundException(String.format(COMMENT_NOT_FOUND_MSG, commentId)));
-        if (comment.getIsBlocked()) {
-            throw new CommentBlockedException(COMMENT_BLOCK_MSG);
+        if (comment.getIsBlocked() != null) {
+            if (comment.getIsBlocked()) {
+                throw new CommentBlockedException(COMMENT_BLOCK_MSG);
+            }
         }
-        return commentMapper.toCommentDto(comment);
+        return loadViewsAndCommentsToShortEventDto(comment);
     }
 
     public void deleteComById(Long userId, Long commentId) {
         checkUserInStorage(userId);
+
+        commentRepository.findByIdAndAuthorId(userId, commentId)
+                .orElseThrow(() -> new NotFoundException(String.format(COMMENT_NOT_FOUND_MSG, commentId)));
+
         if (!commentRepository.existsById(commentId)) {
-            throw new NotFoundException(String.format(COMMENT_NOT_FOUND_MSG, commentId));
+            throw new NotFoundException(String.format(String.format(COMMENT_NOT_FOUND_MSG, commentId)));
         }
+
         commentRepository.deleteById(commentId);
     }
 
@@ -183,13 +219,9 @@ public class CommentServiceImpl implements CommentService {
             predicate.and(qComment.created.loe(rangeEnd));
         }
 
-        if (rangeEnd == null && rangeStart == null) {
-            predicate.and(qComment.created.goe(LocalDateTime.now()));
-        }
-
         if (onlyUnlocked != null) {
             if (onlyUnlocked) {
-                predicate.and(qComment.isBlocked.isFalse());
+                predicate.and(qComment.isBlocked.isNull().or(qComment.isBlocked.isFalse()));
             }
         }
 
@@ -201,5 +233,4 @@ public class CommentServiceImpl implements CommentService {
 
         return commentRepository.findAll(predicate, pageable).toList();
     }
-
 }

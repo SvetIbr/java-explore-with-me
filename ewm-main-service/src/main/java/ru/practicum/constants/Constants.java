@@ -49,7 +49,7 @@ public class Constants {
     public static final String CATEGORY_NOT_UNIQUE_NAME_REASON =
             "Integrity constraint has been violated";
 
-    public static final String COMMENT_NOT_FOUND_MSG = "Event with id=%d was not found";
+    public static final String COMMENT_NOT_FOUND_MSG = "Comment with id=%d was not found";
     public static final String COMMENT_ALREADY_BLOCKED_MSG = "Comment is already blocked";
 
     public static final String ONLY_FOR_PUBLISH_EVENT_MSG =

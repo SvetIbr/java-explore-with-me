@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import ru.practicum.comment.dto.CommentDto;
+import ru.practicum.comment.dto.CommentShortDto;
 import ru.practicum.comment.dto.NewCommentDto;
 import ru.practicum.comment.dto.UpdateCommentDto;
 import ru.practicum.comment.model.Comment;
@@ -18,4 +19,7 @@ public interface CommentMapper {
     Comment toComment(NewCommentDto newCommentDto);
 
     Comment updateComment(UpdateCommentDto updateCommentDto, @MappingTarget Comment comment);
+
+    @Mapping(source = "created", target = "created", dateFormat = DATE_TIME_FORMAT)
+    CommentShortDto toCommentShortDto(Comment comment);
 }

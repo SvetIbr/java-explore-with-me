@@ -1,6 +1,7 @@
 package ru.practicum.comment.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import ru.practicum.comment.model.Comment;
 
@@ -17,4 +18,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Queryds
     List<Comment> findAllByAuthorId(Long userId);
 
     Optional<Comment> findByIdAndEventId(Long commentId, Long eventId);
+    @Query(value = "SELECT COUNT(c) " +
+            "FROM comments AS c " +
+            "WHERE event_id = ?1", nativeQuery = true)
+    int findCountCommentByEventId(Long id);
+
+    Optional<Comment> findByIdAndAuthorId(Long userId, Long commentId);
 }

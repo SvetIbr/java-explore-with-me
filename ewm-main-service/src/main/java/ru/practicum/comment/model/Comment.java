@@ -39,8 +39,8 @@ public class Comment {
     private LocalDateTime created;
 
     @Column(name = "changed")
-    private Boolean isChanged = false;
+    private Boolean isChanged;
 
     @Column(name = "blocked")
-    private Boolean isBlocked = false;
+    private Boolean isBlocked;
 }

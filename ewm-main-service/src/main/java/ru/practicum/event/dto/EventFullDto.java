@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.comment.dto.CommentDto;
+import ru.practicum.comment.dto.CommentShortDto;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Location;
 import ru.practicum.user.dto.UserShortDto;
@@ -108,7 +108,7 @@ public class EventFullDto {
     /**
      * Поле комментарии к событию
      */
-    private List<CommentDto> comments;
+    private List<CommentShortDto> comments;
 
     /**
      * Поле количество одобренных заявок на участие в данном событии

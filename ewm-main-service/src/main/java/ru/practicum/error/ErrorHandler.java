@@ -98,7 +98,7 @@ public class ErrorHandler {
                 exception.getMessage(), LocalDateTime.now());
     }
 
-    @ExceptionHandler(AccessException.class)
+    @ExceptionHandler(CommentBlockedException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ApiError handleCommentBlockedException(CommentBlockedException exception) {
         log.error(exception.getMessage());

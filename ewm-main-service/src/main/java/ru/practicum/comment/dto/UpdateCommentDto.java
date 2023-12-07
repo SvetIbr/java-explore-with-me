@@ -1,10 +1,11 @@
 package ru.practicum.comment.dto;
 
+import com.sun.istack.NotNull;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -14,8 +15,9 @@ import javax.validation.constraints.Size;
 @Builder
 public class UpdateCommentDto {
 
-    @Size(min = 5, max = 7000)
+    @NotNull
     @NotBlank
     @NotEmpty
+    @Length(min = 5, max = 7000)
     private String text;
 }

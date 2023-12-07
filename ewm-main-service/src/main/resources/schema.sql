@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS comments (
     author_id    BIGINT                                                 NOT NULL,
     event_id     BIGINT                                                 NOT NULL,
     created      TIMESTAMP                                              NOT NULL,
-    changed      BOOLEAN                                                NOT NULL,
-    blocked      BOOLEAN                                                NOT NULL,
+    changed      BOOLEAN                                               ,
+    blocked      BOOLEAN                                                ,
     CONSTRAINT comments_users_fk FOREIGN KEY (author_id) REFERENCES users (id) ON UPDATE CASCADE,
     CONSTRAINT comments_events_fk FOREIGN KEY (event_id) REFERENCES events (id) ON UPDATE CASCADE
     );
