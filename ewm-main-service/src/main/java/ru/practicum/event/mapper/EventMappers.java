@@ -7,7 +7,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.service.CategoryService;
 import ru.practicum.comment.mapper.CommentMapper;
-import ru.practicum.comment.model.Comment;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
@@ -15,8 +14,6 @@ import ru.practicum.event.dto.UpdateEventDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.mapper.UserMapper;
-
-import java.util.ArrayList;
 
 import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
 
