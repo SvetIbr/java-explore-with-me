@@ -72,23 +72,22 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public List<CommentDto> blockComments(List<Long> ids) {
-        if (ids != null && !ids.isEmpty()) {
-            List<Comment> comments = commentRepository.findAllById(ids);
-            for (Comment cur : comments) {
-                if (cur.getIsBlocked() != null) {
-                    if (cur.getIsBlocked()) {
-                        throw new ConflictException(COMMENT_ALREADY_BLOCKED_MSG);
-                    }
-                }
-                cur.setIsBlocked(true);
-                commentRepository.save(cur);
-            }
-            return comments.stream()
-                    .map(this::loadViewsAndCommentsToShortEventDto)
-                    .collect(Collectors.toList());
-        } else {
+        if (ids == null || ids.isEmpty()) {
             return new ArrayList<>();
         }
+
+        List<Comment> comments = commentRepository.findAllById(ids);
+        for (Comment cur : comments) {
+            if (cur.getIsBlocked() != null && cur.getIsBlocked()) {
+                throw new ConflictException(COMMENT_ALREADY_BLOCKED_MSG);
+            }
+            cur.setIsBlocked(true);
+            commentRepository.save(cur);
+        }
+
+        return comments.stream()
+                .map(this::loadViewsAndCommentsToShortEventDto)
+                .collect(Collectors.toList());
     }
 
     public CommentDto addComment(Long userId, Long eventId, NewCommentDto newCommentDto) {
@@ -98,6 +97,7 @@ public class CommentServiceImpl implements CommentService {
         }
         User author = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
+
         Comment comment = commentMapper.toComment(newCommentDto);
         comment.setCreated(LocalDateTime.now());
         comment.setAuthor(author);
@@ -152,13 +152,14 @@ public class CommentServiceImpl implements CommentService {
 
     public CommentDto getComById(Long eventId, Long commentId) {
         checkEventInStorage(eventId);
+
         Comment comment = commentRepository.findByIdAndEventId(commentId, eventId)
                 .orElseThrow(() -> new NotFoundException(String.format(COMMENT_NOT_FOUND_MSG, commentId)));
-        if (comment.getIsBlocked() != null) {
-            if (comment.getIsBlocked()) {
-                throw new CommentBlockedException(COMMENT_BLOCK_MSG);
-            }
+
+        if (comment.getIsBlocked() != null && comment.getIsBlocked()) {
+            throw new CommentBlockedException(COMMENT_BLOCK_MSG);
         }
+
         return loadViewsAndCommentsToShortEventDto(comment);
     }
 
