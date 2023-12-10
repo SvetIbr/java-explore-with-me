@@ -165,12 +165,12 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComById(Long userId, Long commentId) {
         checkUserInStorage(userId);
 
-        commentRepository.findByIdAndAuthorId(userId, commentId)
-                .orElseThrow(() -> new NotFoundException(String.format(COMMENT_NOT_FOUND_MSG, commentId)));
-
         if (!commentRepository.existsById(commentId)) {
             throw new NotFoundException(String.format(String.format(COMMENT_NOT_FOUND_MSG, commentId)));
         }
+
+        commentRepository.findByIdAndAuthorId(commentId, userId)
+                .orElseThrow(() -> new NotFoundException(NOT_RIGHTS_MSG));
 
         commentRepository.deleteById(commentId);
     }

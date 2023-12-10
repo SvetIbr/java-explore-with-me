@@ -57,4 +57,6 @@ public class Constants {
 
     public static final String COMMENT_BLOCK_MSG =
             "The comment was blocked";
+
+    public static final String NOT_RIGHTS_MSG = "You do not have rights for the operation";
 }
