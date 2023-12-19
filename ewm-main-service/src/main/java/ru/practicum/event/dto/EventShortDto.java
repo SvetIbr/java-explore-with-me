@@ -76,4 +76,9 @@ public class EventShortDto {
      * Поле количество просмотрев события
      */
     private Integer views;
+
+    /**
+     * Поле комментарии к событию
+     */
+    private int comments;
 }

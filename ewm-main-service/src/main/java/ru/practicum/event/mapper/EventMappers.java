@@ -6,6 +6,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.service.CategoryService;
+import ru.practicum.comment.mapper.CommentMapper;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
@@ -23,7 +24,7 @@ import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
  * @version 1.0
  */
 @Mapper(componentModel = "spring", uses = {UserMapper.class, CategoryService.class,
-        CategoryMapper.class, RequestRepository.class},
+        CategoryMapper.class, RequestRepository.class, CommentMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EventMappers {
     /**

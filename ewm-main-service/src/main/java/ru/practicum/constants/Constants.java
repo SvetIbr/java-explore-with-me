@@ -48,4 +48,15 @@ public class Constants {
     public static final String CONFLICT_REASON = "For the requested operation the conditions are not met";
     public static final String CATEGORY_NOT_UNIQUE_NAME_REASON =
             "Integrity constraint has been violated";
+
+    public static final String COMMENT_NOT_FOUND_MSG = "Comment with id=%d was not found";
+    public static final String COMMENT_ALREADY_BLOCKED_MSG = "Comment is already blocked";
+
+    public static final String ONLY_FOR_PUBLISH_EVENT_MSG =
+            "Event must be published";
+
+    public static final String COMMENT_BLOCK_MSG =
+            "The comment was blocked";
+
+    public static final String NOT_RIGHTS_MSG = "You do not have rights for the operation";
 }

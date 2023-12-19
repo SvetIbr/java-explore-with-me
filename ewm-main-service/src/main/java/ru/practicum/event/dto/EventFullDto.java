@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.comment.dto.CommentShortDto;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Location;
 import ru.practicum.user.dto.UserShortDto;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static ru.practicum.constants.Constants.DATE_TIME_FORMAT;
 
@@ -102,6 +104,11 @@ public class EventFullDto {
      * Поле нужна ли пре-модерация заявок на участие
      */
     private Boolean requestModeration;
+
+    /**
+     * Поле комментарии к событию
+     */
+    private List<CommentShortDto> comments;
 
     /**
      * Поле количество одобренных заявок на участие в данном событии
